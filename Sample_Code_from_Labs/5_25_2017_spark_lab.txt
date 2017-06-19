@@ -1,0 +1,49 @@
+sc.setLogLevel("ERROR")
+rddList = sc.parallelize([1,2,3,4,5,6],2)
+
+rddList.aggregate(
+(0,0),
+(lambda x,y: (x[0]+y,1)),
+(lambda rdd1,rdd2: (rdd1[0]+rdd2[0],rdd1[1]+rdd2[1]))
+)
+
+rddList.aggregate(
+(0,0),
+(lambda x,y: (x[0]+y*y,1)),
+(lambda rdd1,rdd2: (rdd1[0]+rdd2[0],rdd1[1]+rdd2[1]))
+)
+
+rddList.collect()
+
+data = sc.parallelize(['1,2,3,4,5','4,5,6,7,8'])
+
+from pyspark.mllib.linalg import Vectors
+
+data2 = data.map(lambda x: x.split(",")).map(lambda x: Vectors.dense(x))
+summary = Statistics.colStats(data2)
+summary.mean()
+
+from pyspark.mllib.regression import LabeledPoint
+data2 = data.map(lambda x: x.split(",")).map(lambda x: LabeledPoint(x[0],x[1:]))
+data2.collect()
+
+crime = sqlContext.read.format('com.databricks.spark.csv').options(header='true',inferschema='true').load('hdfs://wolf.iems.northwestern.edu/user/huser1/crimeSample.csv')
+crime.show()
+crime.groupBy(crime.Block).avg('Ward').show()
+crime.registerTempTable("crimeTable")
+sqlContext.sql("SELECT Block, AVG(Ward) FROM crimeTable GROUP BY Block").show()
+from pyspark.ml.feature import StandardScaler
+from pyspark.ml.feature import VectorAssembler
+
+df = sqlContext.createDataFrame([(1.0,2.0,3.0),(-2.0,1.0,10.0),(2.0,-9.0,10.0)],['label','b','c'])
+df.show()
+from pyspark.ml import Pipeline
+assembler = VectorAssembler(inputCols=['b','c'],outputCol='allFeatures')
+assembler.transform(df).show()
+scaler = StandardScaler(inputCol='allFeatures',outputCol='features',withStd=True,withMean=False)
+pipeline = Pipeline(stages=[assembler,scaler])
+pipeline.fit(df)
+pipeline.fit(df).transform(df).show()
+from pyspark.ml.regression import LinearRegression
+ols = LinearRegression(maxIter=10)
+pipeline = Pipeline(stages=[assembler,scaler,ols])

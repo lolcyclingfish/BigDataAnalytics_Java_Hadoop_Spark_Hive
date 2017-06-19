@@ -1,0 +1,24 @@
+sc.setLogLevel("ERROR")
+rdd1 = sc.parallelize([1,2,3,4,5])
+rdd1.collect()
+output = rdd1.collect()
+for i in output:
+    print("result "+str(i))
+rdd1.saveAsTextFile("hdfs://wolf.iems.northwestern.edu/user/huser1/rdd1")
+rdd1.collect()
+rdd1.reduce(lambda x,y: x+y)
+temp = sc.parallelize(['1901,52','1901,45','1902,50','1902,70','2000,100'])
+temp.map(lambda x: x.split(",")).take(1)
+temp.map(lambda x: x.split(",")).filter(lambda x: x[0] in ['1901','1902']).collect()
+temp.map(lambda x: x.split(",")).filter(lambda x: x[0] in ['1901','1902']).map(lambda x: tuple(x)).reduceByKey(lambda x,y: max(x,y)).collect()
+temp.collect()
+def customMapPartitions(iterator):
+    result = []
+    for i in iterator:
+        (year,temperature) = i.split(",")
+        if year == '1901' or year == '1902':
+            result.append((year,temperature))
+    return result
+temp.mapPartitions(customMapPartitions).collect()
+temp.mapPartitions(lambda x: iter([len(list(x))])).collect()
+temp.mapPartitionsWithIndex(lambda id,x: iter([(id,len(list(x)))])).collect()

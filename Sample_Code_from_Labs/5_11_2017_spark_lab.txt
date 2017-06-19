@@ -1,0 +1,24 @@
+sc.setLogLevel("ERROR")
+rdd = sc.parallelize([1,2,3,4,5])
+rdd.getNumPartitions()
+local = rdd.collect()
+local
+rdd.first()
+rdd
+local
+def f(x):
+    return x+1
+rdd2 = rdd.map(f)
+rdd2.collect()
+rdd.persist()
+rdd.count()
+rdd2.collect()
+rdd2 = rdd.map(lambda t: t+1)
+rdd2.collect()
+rdd3 = rdd.filter(lambda t: t%2 == 0)
+rdd3.collect()
+local
+rdd3 = rdd.filter(lambda t: t%2 == 0).map(lambda t: t+1).collect()
+rdd3.collect()
+import readline 
+readline.write_history_file("5_11_2017_spark_lab.txt")
