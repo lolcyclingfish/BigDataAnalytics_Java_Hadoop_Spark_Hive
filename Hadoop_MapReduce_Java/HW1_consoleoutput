@@ -1,0 +1,67 @@
+1. copy the data on wolf to hdfs:
+
+[mding@wolf course]$ hdfs dfs -copyFromLocal temperature
+
+2. go back to the directory fold where jar file is located at, and run below:
+
+[mding@wolf home]$ cd mding
+
+[mding@wolf ~]$ cd Homework1
+
+[mding@wolf Homework1]$ ls
+
+course  draft  mr-app-1.0-SNAPSHOT.jar  pom.xml  src  target
+
+[mding@wolf Homework1]$ hadoop jar mr-app-1.0-SNAPSHOT.jar com.javamakeuse.hadoop.poc.Homework1.Exercise1 temperature tempoutput.txt
+
+17/04/13 13:47:35 INFO client.RMProxy: Connecting to ResourceManager at wolf.iems.northwestern.edu/129.105.36.59:8032
+
+17/04/13 13:47:36 INFO client.RMProxy: Connecting to ResourceManager at wolf.iems.northwestern.edu/129.105.36.59:8032
+
+17/04/13 13:47:36 INFO mapred.FileInputFormat: Total input paths to process : 2
+
+3. the specified "tempoutput.txt" will be on hdfs, and we can getmerge all of them into one output file, and it will be automatically downloaded to wolf local working directory folder:
+
+
+
+[mding@wolf Homework1]$ hdfs dfs -ls
+
+Found 7 items
+
+drwx------   - mding mding          0 2017-04-13 13:48 .staging
+
+-rw-r--r--   2 mding mding 3232534327 2017-04-13 13:38 IBM.csv
+
+drwxr-xr-x   - mding mding          0 2017-04-13 13:43 IBMoutput.txt
+
+drwxrwxrwx   - mding mding          0 2017-04-04 17:29 bigdata
+
+-rwxrwxrwx   2 mding mding        103 2017-04-04 17:10 config
+
+drwxr-xr-x   - mding mding          0 2017-04-13 13:46 temperature
+
+drwxr-xr-x   - mding mding          0 2017-04-13 13:48 tempoutput.txt
+
+[mding@wolf Homework1]$ hdfs dfs -copyToLocal tempoutput.txt
+
+[mding@wolf Homework1]$ ls
+
+course  draft  mr-app-1.0-SNAPSHOT.jar  pom.xml  src  target  tempoutput.txt
+
+[mding@wolf Homework1]$ cd tempoutput.txt/
+
+[mding@wolf tempoutput.txt]$ ls
+
+_SUCCESS    part-00001  part-00003  part-00005  part-00007  part-00009  part-00011  part-00013  part-00015  part-00017  part-00019
+
+part-00000  part-00002  part-00004  part-00006  part-00008  part-00010  part-00012  part-00014  part-00016  part-00018
+
+[mding@wolf tempoutput.txt]$ cd ..
+
+[mding@wolf Homework1]$ hdfs dfs -getmerge tempoutput.txt tempoutputall.txt
+
+[mding@wolf Homework1]$ ls
+
+course  draft  mr-app-1.0-SNAPSHOT.jar  pom.xml  src  target  tempoutput.txt  tempoutputall.txt
+
+[mding@wolf Homework1]$ vi tempoutputall.txt
