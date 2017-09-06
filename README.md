@@ -1,6 +1,6 @@
-# BigDataAnalytics_Java_Hadoop_Spark_Hive
 
-How to set up a maven project in on Eclipse: credit to (E. Liu)
+
+# How to set up a maven project in on Eclipse and run in hadoop on remote server: credit to (E. Liu)
 
 brew install mvnvm (just to install maven on mac)
 make a eclipse maven project on your local (File -> New -> Project -> Maven Project). During the setup just click next until you run into a place that prompt you to set the group id = com.javamakeuse.hadoop.poc (it turns out you can name it whatever you want), artifact id = Homeworkx (name is whatever you want, e.g. Homework1)
